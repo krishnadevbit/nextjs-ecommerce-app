@@ -29,7 +29,7 @@ const NavIcons = () => {
         onClick={handleProfile}
       />
       {isProfileOpen && (
-        <div className="absolute rounded-md left-0 top-12 p-4 text-sm shadow-[0_3px_10px_rgb(0,0,0,0.2)] z-20">
+        <div className="absolute rounded-md left-0 bg-white top-12 p-4 text-sm shadow-[0_3px_10px_rgb(0,0,0,0.2)] z-20">
           <Link href="/profile">Profile</Link>
           <div className="mt-2 cursor-pointer">Logout</div>
         </div>
@@ -41,13 +41,15 @@ const NavIcons = () => {
         height={22}
         className="cursor-pointer"
       />
-      <div className="relative cursor-pointer">
+      <div
+        className="relative cursor-pointer"
+        onClick={() => setIsCartOpen((prev) => !prev)}
+      >
         <Image
           src="/cart.png"
           alt="Krishnadev cart image"
           width={22}
           height={22}
-          onClick={() => setIsCartOpen((prev) => !prev)}
         />
         <div className="absolute -top-4 -right-4 w-6 h-6 bg-krishdev flex items-center justify-center rounded-full text-white text-sm">
           2
