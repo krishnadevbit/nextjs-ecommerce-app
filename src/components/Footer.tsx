@@ -9,11 +9,11 @@ const Footer = () => {
         {/* LEFT */}
         <div className="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-8">
           <Link href="/">
-            <div className="text-2xl tracking-wide">KRISHDEV</div>
+            <div className="text-2xl tracking-wide">KriShop</div>
           </Link>
           <p>Bhelatand Colony, Dhanbad, Jharkhand, India 828103</p>
           <span className="font-semibold">krishnadevbit@gmail.com</span>
-          <span className="font-semibold">+91 9999999999</span>
+          <span className="font-semibold">+91 1234567890</span>
           <div className="flex gap-6">
             <Image src="/facebook.png" alt="" width={16} height={16} />
             <Image src="/instagram.png" alt="" width={16} height={16} />
@@ -82,7 +82,7 @@ const Footer = () => {
       </div>
       {/* BOTTOM */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-8 mt-16">
-        <div className="">© 2024 Krishdev Shop</div>
+        <div className="">© 2024 KriShop by Krishna Dev</div>
         <div className="flex flex-col gap-8 md:flex-row">
           <div className="">
             <span className="text-gray-500 mr-4">Language</span>
