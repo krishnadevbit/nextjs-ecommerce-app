@@ -7,14 +7,13 @@ import { useWixClient } from "@/hooks/useWixClient";
 import { currentCart } from "@wix/ecom";
 import PayPalButton from "./PayPalButton";
 import { useRouter } from "next/navigation";
+
 interface CartModalProps {
   handleCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const CartModal = ({ handleCartOpen }: CartModalProps) => {
-  // TEMPORARY
-  // const cartItems = true;
-  const router = useRouter();
 
+const CartModal = ({ handleCartOpen }: CartModalProps) => {
+  const router = useRouter();
   const wixClient = useWixClient();
   const { cart, isLoading, removeItem, getCart } = useCartStore();
 
@@ -44,31 +43,39 @@ const CartModal = ({ handleCartOpen }: CartModalProps) => {
 
   const handlePaymentSuccess = async (details: any) => {
     try {
-      // Extract the line item IDs and filter out any null or undefined values
-      console.log("details", details);
       const lineItems =
-        cart.lineItems
-          ?.map((item) => item._id)
-          .filter((id): id is string => !!id) || [];
+        cart.lineItems?.map((item) => ({
+          id: item._id,
+          name: item.productName?.original,
+          image: item.image,
+          quantity: item.quantity,
+          price: item.price?.amount,
+        })) || [];
 
       if (lineItems.length > 0) {
-        await wixClient.currentCart.removeLineItemsFromCurrentCart(lineItems);
+        const itemIds: string[] = lineItems
+          .map((item) => item.id)
+          .filter((id): id is string => !!id);
+        await wixClient.currentCart.removeLineItemsFromCurrentCart(itemIds);
       }
-
-      // Refresh the cart state
+      sessionStorage.setItem("orderDetails", JSON.stringify(lineItems));
       await getCart(wixClient);
       handleCartOpen((prev) => !prev);
-      // Redirect to the success page
-      router.push("/success");
+      router.push(`/success?orderId=${details.id}`);
     } catch (err) {
       console.error("Failed to clear cart after payment:", err);
     }
   };
 
+  const isCartEmpty = !cart.lineItems || cart.lineItems.length === 0;
+
   return (
     <div className="w-max absolute p-4 rounded-md shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-white top-12 right-0 flex flex-col gap-6 z-20">
-      {!cart.lineItems ? (
-        <div className="">Cart is Empty</div>
+      {isCartEmpty ? (
+        <div>
+          <p className="text-md">Cart 🛒 is Empty</p>
+          <p className="text-sm">Please add some products! 🤪</p>
+        </div>
       ) : (
         <>
           <h2 className="text-xl">Shopping Cart</h2>
@@ -93,7 +100,7 @@ const CartModal = ({ handleCartOpen }: CartModalProps) => {
                 )}
                 <div className="flex flex-col justify-between w-full">
                   {/* TOP */}
-                  <div className="">
+                  <div>
                     {/* TITLE */}
                     <div className="flex items-center justify-between gap-8">
                       <h3 className="font-semibold">
@@ -129,10 +136,10 @@ const CartModal = ({ handleCartOpen }: CartModalProps) => {
             ))}
           </div>
           {/* BOTTOM */}
-          <div className="">
+          <div>
             <div className="flex items-center justify-between font-semibold">
-              <span className="">Subtotal</span>
-              <span className="">${cart.subtotal.amount}</span>
+              <span>Subtotal</span>
+              <span>${cart.subtotal.amount}</span>
             </div>
             <p className="text-gray-500 text-sm mt-2 mb-4">
               Shipping and taxes calculated at checkout.
@@ -142,35 +149,6 @@ const CartModal = ({ handleCartOpen }: CartModalProps) => {
                 View Cart
               </button>
               <div className="flex items-center justify-center">
-                {/* <PayPalScriptProvider
-                  options={{
-                    clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
-                  }}
-                > */}
-                {/* <button
-                  className="rounded-md py-3 px-4 bg-black text-white disabled:cursor-not-allowed disabled:opacity-75"
-                  disabled={isLoading}
-                  onClick={handleCheckout}
-                >
-                  Checkout
-                </button> */}
-                {/* <PayPalButtons
-                    style={{ layout: "horizontal", label: "checkout" }}
-                    createOrder={(data, actions) => {
-                      return actions.order.create({
-                        intent: "CAPTURE",
-                        purchase_units: [
-                          {
-                            amount: {
-                              value: cart.subtotal.amount,
-                              currency_code: "USD",
-                            },
-                          },
-                        ],
-                      });
-                    }}
-                  />
-                </PayPalScriptProvider> */}
                 <PayPalButton
                   amount={cart.subtotal.amount}
                   onSuccess={handlePaymentSuccess}

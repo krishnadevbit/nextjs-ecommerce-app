@@ -9,6 +9,7 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "static.wixstatic.com",
+        pathname: "/**",
       },
       {
         protocol: "https",

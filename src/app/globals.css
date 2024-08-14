@@ -9,3 +9,17 @@
 .scrollbar-hide {
   scrollbar-width: none;
 }
+
+.underline-blue {
+  position: relative;
+  display: inline-block;
+}
+.underline-blue::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px; /* Adjust this value to set the gap between the text and underline */
+  width: 100%;
+  height: 2px; /* Adjust this value to set the thickness of the underline */
+  background-color: #1e40af; /* Customize the underline color */
+}

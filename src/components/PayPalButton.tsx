@@ -34,7 +34,7 @@ const PayPalButton = ({ amount, onSuccess }: PayPalButtonProps) => {
           });
         }}
         onApprove={(data, actions) => {
-          return actions.order.capture().then((details) => {
+          return actions.order?.capture().then((details) => {
             onSuccess(details);
           });
         }}
