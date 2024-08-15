@@ -1,8 +1,13 @@
 import OrderPage from "@/components/OrdersPage";
-import React from "react";
+import Skeleton from "@/components/Skeleton";
+import React, { Suspense } from "react";
 
 const page = () => {
-  return <OrderPage />;
+  return (
+    <Suspense fallback={<Skeleton />}>
+      <OrderPage />
+    </Suspense>
+  );
 };
 
 export default page;

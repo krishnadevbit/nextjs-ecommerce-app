@@ -112,7 +112,7 @@ const OrderPage = () => {
   const formattedDate = formatDate(order.create_time);
 
   return (
-    <Suspense fallback={<Skeleton />}>
+    <>
       <div className="flex flex-col md:flex-row md:h-[calc(100vh-180px)]">
         {/* Order Items Section */}
         {sessionData && (
@@ -189,7 +189,7 @@ const OrderPage = () => {
           Continue Shopping
         </Link>
       </div>
-    </Suspense>
+    </>
   );
 };
 
