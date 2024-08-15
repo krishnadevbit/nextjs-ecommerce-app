@@ -83,7 +83,7 @@ const CartModal = ({ handleCartOpen }: CartModalProps) => {
       sessionStorage.setItem("orderDetails", JSON.stringify(lineItems));
       await getCart(wixClient);
       handleCartOpen((prev) => !prev);
-      router.push(`/success?orderId=${details.id}`);
+      router.push(`/success/${details.id}`);
     } catch (err) {
       console.error("Failed to clear cart after payment:", err);
     }
