@@ -21,6 +21,13 @@ const PayPalButton = ({ amount, onSuccess }: PayPalButtonProps) => {
       }}
     >
       <PayPalButtons
+        style={{
+          layout: "vertical", // or "horizontal"
+          color: "gold", // options: "gold", "blue", "silver", "white", "black"
+          shape: "pill", // options: "rect", "pill"
+          label: "buynow", // options: "checkout", "pay", "buynow", "paypal", "installment"
+          height: 35, // customize height here
+        }}
         fundingSource={FUNDING.PAYPAL}
         createOrder={(data, actions) => {
           return actions.order.create({

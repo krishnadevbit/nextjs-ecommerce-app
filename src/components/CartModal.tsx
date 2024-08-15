@@ -66,7 +66,9 @@ const CartModal = ({ handleCartOpen }: CartModalProps) => {
       console.error("Failed to clear cart after payment:", err);
     }
   };
-
+  const handleViewCart = () => {
+    router.push("/cart");
+  };
   const isCartEmpty = !cart.lineItems || cart.lineItems.length === 0;
 
   return (
@@ -145,7 +147,16 @@ const CartModal = ({ handleCartOpen }: CartModalProps) => {
               Shipping and taxes calculated at checkout.
             </p>
             <div className="flex justify-between text-sm">
-              <button className="rounded-md py-3 px-4 ring-1 ring-gray-300">
+              <button
+                className="rounded-md py-3 px-4 ring-1 ring-gray-300"
+                onClick={handleViewCart}
+                // onClick={() => {
+                //   handleCartOpen((prev) => !prev);
+                //   // setTimeout(() => {
+                //   //   router.push("/cart"); // Then navigate to the cart page after a brief delay
+                //   // }, 3000);
+                // }}
+              >
                 View Cart
               </button>
               <div className="flex items-center justify-center">
