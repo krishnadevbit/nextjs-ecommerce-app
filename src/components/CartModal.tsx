@@ -8,6 +8,27 @@ import { currentCart } from "@wix/ecom";
 import PayPalButton from "./PayPalButton";
 import { useRouter } from "next/navigation";
 
+interface LineItem {
+  _id: string;
+  productName?: {
+    original: string;
+  };
+  image?: string;
+  quantity?: number;
+  price?: {
+    amount: number;
+  };
+  availability?: {
+    status: string;
+  };
+}
+interface Cart {
+  lineItems?: Array<LineItem>;
+  subtotal?: {
+    amount: number;
+    currency: string;
+  };
+}
 interface CartModalProps {
   handleCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -16,35 +37,36 @@ const CartModal = ({ handleCartOpen }: CartModalProps) => {
   const router = useRouter();
   const wixClient = useWixClient();
   const { cart, isLoading, removeItem, getCart } = useCartStore();
+  const typedCart = cart as Cart;
 
-  const handleCheckout = async () => {
-    try {
-      const checkout =
-        await wixClient.currentCart.createCheckoutFromCurrentCart({
-          channelType: currentCart.ChannelType.WEB,
-        });
+  // const handleCheckout = async () => {
+  //   try {
+  //     const checkout =
+  //       await wixClient.currentCart.createCheckoutFromCurrentCart({
+  //         channelType: currentCart.ChannelType.WEB,
+  //       });
 
-      const { redirectSession } =
-        await wixClient.redirects.createRedirectSession({
-          ecomCheckout: { checkoutId: checkout.checkoutId },
-          callbacks: {
-            postFlowUrl: window.location.origin,
-            thankYouPageUrl: `${window.location.origin}/success`,
-          },
-        });
+  //     const { redirectSession } =
+  //       await wixClient.redirects.createRedirectSession({
+  //         ecomCheckout: { checkoutId: checkout.checkoutId },
+  //         callbacks: {
+  //           postFlowUrl: window.location.origin,
+  //           thankYouPageUrl: `${window.location.origin}/success`,
+  //         },
+  //       });
 
-      if (redirectSession?.fullUrl) {
-        window.location.href = redirectSession.fullUrl;
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  //     if (redirectSession?.fullUrl) {
+  //       window.location.href = redirectSession.fullUrl;
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   const handlePaymentSuccess = async (details: any) => {
     try {
       const lineItems =
-        cart.lineItems?.map((item) => ({
+        typedCart.lineItems?.map((item) => ({
           id: item._id,
           name: item.productName?.original,
           image: item.image,
@@ -69,7 +91,7 @@ const CartModal = ({ handleCartOpen }: CartModalProps) => {
   const handleViewCart = () => {
     router.push("/cart");
   };
-  const isCartEmpty = !cart.lineItems || cart.lineItems.length === 0;
+  const isCartEmpty = !typedCart.lineItems || typedCart.lineItems.length === 0;
 
   return (
     <div className="w-max absolute p-4 rounded-md shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-white top-12 right-0 flex flex-col gap-6 z-20">
@@ -84,8 +106,8 @@ const CartModal = ({ handleCartOpen }: CartModalProps) => {
           {/* LIST */}
           <div className="flex flex-col gap-8">
             {/* ITEM */}
-            {cart.lineItems &&
-              cart.lineItems.map((item) => (
+            {typedCart.lineItems &&
+              typedCart.lineItems.map((item) => (
                 <div className="flex gap-4" key={item._id}>
                   {item.image && (
                     <Image
@@ -146,7 +168,7 @@ const CartModal = ({ handleCartOpen }: CartModalProps) => {
           <div>
             <div className="flex items-center justify-between font-semibold">
               <span>Subtotal</span>
-              <span>${cart.subtotal.amount}</span>
+              <span>${typedCart.subtotal?.amount}</span>
             </div>
             <p className="text-gray-500 text-sm mt-2 mb-4">
               Shipping and taxes calculated at checkout.
@@ -155,18 +177,12 @@ const CartModal = ({ handleCartOpen }: CartModalProps) => {
               <button
                 className="rounded-md py-3 px-4 ring-1 ring-gray-300"
                 onClick={handleViewCart}
-                // onClick={() => {
-                //   handleCartOpen((prev) => !prev);
-                //   // setTimeout(() => {
-                //   //   router.push("/cart"); // Then navigate to the cart page after a brief delay
-                //   // }, 3000);
-                // }}
               >
                 View Cart
               </button>
               <div className="flex items-center justify-center">
                 <PayPalButton
-                  amount={cart.subtotal.amount}
+                  amount={typedCart?.subtotal?.amount || 0}
                   onSuccess={handlePaymentSuccess}
                 />
               </div>

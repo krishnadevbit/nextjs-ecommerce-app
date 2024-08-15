@@ -8,15 +8,39 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { media as wixMedia } from "@wix/sdk";
 
+interface LineItem {
+  _id: string;
+  productName?: {
+    original: string;
+  };
+  image?: string;
+  quantity?: number;
+  price?: {
+    amount: number;
+  };
+  availability?: {
+    status: string;
+  };
+}
+interface Cart {
+  lineItems?: Array<LineItem>;
+  subtotal?: {
+    amount: number;
+    currency: string;
+  };
+}
+
 const ViewCart = () => {
   const router = useRouter();
   const wixClient = useWixClient();
   const { cart, isLoading, removeItem, getCart } = useCartStore();
 
+  const typedCart = cart as Cart;
+
   const handlePaymentSuccess = async (details: any) => {
     try {
       const lineItems =
-        cart.lineItems?.map((item) => ({
+        typedCart.lineItems?.map((item) => ({
           id: item._id,
           name: item.productName?.original,
           image: item.image,
@@ -41,10 +65,10 @@ const ViewCart = () => {
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Cart Items</h1>
-      {cart.lineItems?.length ? (
+      {typedCart.lineItems?.length ? (
         <>
           <div className="flex flex-col gap-8">
-            {cart.lineItems.map((item) => (
+            {typedCart.lineItems.map((item) => (
               <div className="flex gap-4 border-b py-4" key={item._id}>
                 {item.image && (
                   <Image
@@ -85,11 +109,11 @@ const ViewCart = () => {
           </div>
           <div className="mt-4 flex justify-between font-semibold">
             <span>Subtotal</span>
-            <span>${cart.subtotal.amount}</span>
+            <span>${typedCart.subtotal?.amount}</span>
           </div>
           <div className="flex items-center justify-center">
             <PayPalButton
-              amount={cart.subtotal.amount}
+              amount={typedCart.subtotal?.amount || 0}
               onSuccess={handlePaymentSuccess}
             />
           </div>
