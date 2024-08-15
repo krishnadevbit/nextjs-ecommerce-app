@@ -112,7 +112,7 @@ const OrderPage = () => {
   const formattedDate = formatDate(order.create_time);
 
   return (
-    <Suspense>
+    <Suspense fallback={<Skeleton />}>
       <div className="flex flex-col md:flex-row md:h-[calc(100vh-180px)]">
         {/* Order Items Section */}
         {sessionData && (

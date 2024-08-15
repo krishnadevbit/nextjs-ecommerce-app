@@ -1,4 +1,5 @@
 "use client";
+import Skeleton from "@/components/Skeleton";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, Suspense } from "react";
 import Confetti from "react-confetti";
@@ -23,7 +24,7 @@ const SuccessPage = () => {
   }, [orderId, router]);
 
   return (
-    <Suspense>
+    <Suspense fallback={<Skeleton />}>
       <div className="flex flex-col gap-6 items-center justify-center h-[calc(100vh-180px)]">
         <Confetti width={2000} height={1000} />
         <h1 className="text-5xl text-green-700">
