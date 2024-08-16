@@ -5,31 +5,12 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { media as wixMedia } from "@wix/sdk";
 import Skeleton from "@/components/Skeleton";
+import { getAccessToken, fetchOrderDetails } from "@/lib/paypalClient";
 interface OrdersIdProps {
   params: {
     orderId: string;
   };
 }
-const getAccessToken = async () => {
-  const response = await fetch(
-    `https://api.sandbox.paypal.com/v1/oauth2/token`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Basic ${btoa(
-          `${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}:${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_SECRET}`
-        )}`,
-      },
-      body: new URLSearchParams({
-        grant_type: "client_credentials",
-      }),
-    }
-  );
-  const data = await response.json();
-  return data.access_token;
-};
-
 const OrderPage = ({ params }: OrdersIdProps) => {
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -40,26 +21,15 @@ const OrderPage = ({ params }: OrdersIdProps) => {
   useEffect(() => {
     const fetchOrder = async () => {
       if (!params.orderId) {
-        router.push("/404");
+        // router.push("/orders");
         return;
       }
       try {
         const token = await getAccessToken();
-        const response = await fetch(
-          `https://api.sandbox.paypal.com/v2/checkout/orders/${params.orderId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch order");
-        }
-        const data = await response.json();
+        const data = await fetchOrderDetails(params.orderId, token);
         setOrder(data);
       } catch (err) {
-        router.push("/404");
+        // router.push("/orders");
       } finally {
         setLoading(false);
       }
@@ -99,6 +69,7 @@ const OrderPage = ({ params }: OrdersIdProps) => {
   }
 
   const formatDate = (dateString: string) => {
+    console.log("date", dateString);
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
       day: "2-digit",
@@ -110,8 +81,8 @@ const OrderPage = ({ params }: OrdersIdProps) => {
     };
     return date.toLocaleDateString("en-GB", options).replace(",", " at");
   };
-
-  const formattedDate = formatDate(order.create_time);
+  console.log(order);
+  const formattedDate = formatDate(order.create_time || order.update_time);
 
   return (
     <>
