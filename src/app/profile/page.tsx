@@ -16,37 +16,37 @@ const ProfilePage = async () => {
     return <div className="">Not logged in!</div>;
   }
 
-  const orderRes = await wixClient.orders.searchOrders({
-    search: {
-      filter: { "buyerInfo.contactId": { $eq: user.member?.contactId } },
-    },
-  });
+  // const orderRes = await wixClient.orders.searchOrders({
+  //   search: {
+  //     filter: { "buyerInfo.contactId": { $eq: user.member?.contactId } },
+  //   },
+  // });
 
   return (
-    <div className="flex flex-col md:flex-row gap-24 md:h-[calc(100vh-180px)] items-center px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64">
-      <div className="w-full md:w-1/2">
+    <div className="flex flex-col md:flex-row gap-24 md:h-[calc(100vh)] items-center px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 mt-4 justify-center">
+      <div className="w-full">
         <h1 className="text-2xl">Profile</h1>
-        <form action={updateUser} className="mt-12 flex flex-col gap-4">
+        <form action={updateUser} className="mt-5 flex flex-col gap-4">
           <input type="text" hidden name="id" value={user.member.contactId} />
           <label className="text-sm text-gray-700">Username</label>
           <input
             type="text"
             name="username"
-            placeholder={user.member?.profile?.nickname || "john"}
+            placeholder={user.member?.profile?.nickname || "username"}
             className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
           />
           <label className="text-sm text-gray-700">First Name</label>
           <input
             type="text"
             name="firstName"
-            placeholder={user.member?.contact?.firstName || "John"}
+            placeholder={user.member?.contact?.firstName || "firstname"}
             className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
           />
           <label className="text-sm text-gray-700">Surname</label>
           <input
             type="text"
             name="lastName"
-            placeholder={user.member?.contact?.lastName || "Doe"}
+            placeholder={user.member?.contact?.lastName || "lastname"}
             className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
           />
           <label className="text-sm text-gray-700">Phone</label>
@@ -56,7 +56,7 @@ const ProfilePage = async () => {
             placeholder={
               (user.member?.contact?.phones &&
                 user.member?.contact?.phones[0]) ||
-              "+1234567"
+              "+91 9999999999"
             }
             className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
           />
@@ -64,13 +64,13 @@ const ProfilePage = async () => {
           <input
             type="email"
             name="email"
-            placeholder={user.member?.loginEmail || "john@gmail.com"}
+            placeholder={user.member?.loginEmail || "example@gmail.com"}
             className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
           />
           <UpdateButton />
         </form>
       </div>
-      <div className="w-full md:w-1/2">
+      {/* <div className="w-full md:w-1/2">
         <h1 className="text-2xl">Orders</h1>
         <div className="mt-12 flex flex-col">
           {orderRes.orders.map((order) => (
@@ -90,7 +90,7 @@ const ProfilePage = async () => {
             </Link>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
